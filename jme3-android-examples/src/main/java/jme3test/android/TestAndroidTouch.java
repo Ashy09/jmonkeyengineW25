@@ -314,7 +314,7 @@ public class TestAndroidTouch extends SimpleApplication {
 
         @Override
         public void endInput() {
-//            logger.log(Level.INFO, "RawInputListenerEvent: EndInput");
+
         }
 
         @Override

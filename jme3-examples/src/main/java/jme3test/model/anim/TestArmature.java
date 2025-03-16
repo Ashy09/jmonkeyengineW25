@@ -131,40 +131,56 @@ public class TestArmature extends SimpleApplication {
         node.addControl(ac);
 
         composer.setCurrentAction("anim");
+        // Set up the armature debug
+        setupArmatureDebug();
+        // Disable the fly cam
+        flyCam.setEnabled(false);
+        // Set up the chase camera
+        setupChaseCamera();
+        // Set up input mapping for the bind action
+        setupInputMapping();
 
+       private void setupArmatureDebug() {
         ArmatureDebugAppState debugAppState = new ArmatureDebugAppState();
         debugAppState.addArmatureFrom(ac);
         stateManager.attach(debugAppState);
+}
 
-        flyCam.setEnabled(false);
+    private void setupChaseCamera() {
+    ChaseCameraAppState chaseCam = new ChaseCameraAppState();
+    chaseCam.setTarget(node);
+    getStateManager().attach(chaseCam);
+    chaseCam.setInvertHorizontalAxis(true);
+    chaseCam.setInvertVerticalAxis(true);
+    chaseCam.setZoomSpeed(0.5f);
+    chaseCam.setMinVerticalRotation(-FastMath.HALF_PI);
+    chaseCam.setRotationSpeed(3);
+    chaseCam.setDefaultDistance(3);
+    chaseCam.setMinDistance(0.01f);
+    chaseCam.setZoomSpeed(0.01f);
+    chaseCam.setDefaultVerticalRotation(0.3f);
+}
 
-        ChaseCameraAppState chaseCam = new ChaseCameraAppState();
-        chaseCam.setTarget(node);
-        getStateManager().attach(chaseCam);
-        chaseCam.setInvertHorizontalAxis(true);
-        chaseCam.setInvertVerticalAxis(true);
-        chaseCam.setZoomSpeed(0.5f);
-        chaseCam.setMinVerticalRotation(-FastMath.HALF_PI);
-        chaseCam.setRotationSpeed(3);
-        chaseCam.setDefaultDistance(3);
-        chaseCam.setMinDistance(0.01f);
-        chaseCam.setZoomSpeed(0.01f);
-        chaseCam.setDefaultVerticalRotation(0.3f);
-
-
-        inputManager.addMapping("bind", new KeyTrigger(KeyInput.KEY_SPACE));
-        inputManager.addListener(new ActionListener() {
-            @Override
-            public void onAction(String name, boolean isPressed, float tpf) {
-                if (isPressed) {
-                    composer.reset();
-                    armature.applyBindPose();
-
-                } else {
-                    composer.setCurrentAction("anim");
-                }
+    private void setupInputBinding() {
+    inputManager.addMapping("bind", new KeyTrigger(KeyInput.KEY_SPACE));
+    inputManager.addListener(new ActionListener() {
+        @Override
+        public void onAction(String name, boolean isPressed, float tpf) {
+            if (isPressed) {
+                composer.reset();
+                armature.applyBindPose();
+            } else {
+                composer.setCurrentAction("anim");
             }
-        }, "bind");
+        }
+    }, "bind");
+}
+
+// Call these methods in the main setup function
+setupArmatureDebug();
+setupChaseCamera();
+setupInputBinding();
+
     }
 
     private Mesh createMesh() {

@@ -1,4 +1,4 @@
-package jme3test.android;
+package jme.test.android;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.Joystick;
@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 public class TestAndroidSensors extends SimpleApplication implements ActionListener, AnalogListener {
 
     private static final Logger logger = Logger.getLogger(TestAndroidSensors.class.getName());
+    private static final String MOUSE_CLICK = "MouseClick";
 
     private Geometry geomZero = null;
     // Map of joysticks saved with the joyId as the key
@@ -48,6 +49,9 @@ public class TestAndroidSensors extends SimpleApplication implements ActionListe
     private final String ORIENTATION_Y_MINUS = "Orientation_Y_Minus";
     private final String ORIENTATION_Z_PLUS = "Orientation_Z_Plus";
     private final String ORIENTATION_Z_MINUS = "Orientation_Z_Minus";
+
+    private static final String COLOR_PARAM = "Color";  // Define a constant
+
 
 
     // variables to save the current rotation
@@ -86,9 +90,6 @@ public class TestAndroidSensors extends SimpleApplication implements ActionListe
     @Override
     public void simpleInitApp() {
 
-        // useAbsolute = true;
-        // enableRumble = true;
-
         if (enableFlyByCameraRotation) {
             flyCam.setEnabled(true);
         } else {
@@ -101,21 +102,21 @@ public class TestAndroidSensors extends SimpleApplication implements ActionListe
 
         Geometry geoX = new Geometry("X", lineX);
         Material matX = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matX.setColor("Color", ColorRGBA.Red);
+        matX.setColor(COLOR_PARAM, ColorRGBA.Red);
         matX.getAdditionalRenderState().setLineWidth(30);
         geoX.setMaterial(matX);
         rootNode.attachChild(geoX);
 
         Geometry geoY = new Geometry("Y", lineY);
         Material matY = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matY.setColor("Color", ColorRGBA.Green);
+        matY.setColor(COLOR_PARAM, ColorRGBA.Green);
         matY.getAdditionalRenderState().setLineWidth(30);
         geoY.setMaterial(matY);
         rootNode.attachChild(geoY);
 
         Geometry geoZ = new Geometry("Z", lineZ);
         Material matZ = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matZ.setColor("Color", ColorRGBA.Blue);
+        matZ.setColor(COLOR_PARAM, ColorRGBA.Blue);
         matZ.getAdditionalRenderState().setLineWidth(30);
         geoZ.setMaterial(matZ);
         rootNode.attachChild(geoZ);
@@ -123,7 +124,7 @@ public class TestAndroidSensors extends SimpleApplication implements ActionListe
         Box b = new Box(1, 1, 1);
         geomZero = new Geometry("Box", b);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Yellow);
+        mat.setColor(COLOR_PARAM, ColorRGBA.Yellow);
         Texture tex_ml = assetManager.loadTexture("Interface/Logo/Monkey.jpg");
         mat.setTexture("ColorMap", tex_ml);
         geomZero.setMaterial(mat);
@@ -134,8 +135,8 @@ public class TestAndroidSensors extends SimpleApplication implements ActionListe
 
         // Touch (aka MouseInput.BUTTON_LEFT) is used to record the starting
         // orientation when using absolute rotations
-        inputManager.addMapping("MouseClick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addListener(this, "MouseClick");
+        inputManager.addMapping(MOUSE_CLICK, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addListener(this, MOUSE_CLICK);
 
         Joystick[] joysticks = inputManager.getJoysticks();
         if (joysticks == null || joysticks.length < 1) {
@@ -206,7 +207,7 @@ public class TestAndroidSensors extends SimpleApplication implements ActionListe
             for (IntMap.Entry<Joystick> entry : joystickMap) {
                 for (JoystickAxis axis : entry.getValue().getAxes()) {
                     if (axis instanceof SensorJoystickAxis) {
-                        logger.log(Level.INFO, "Calibrating Axis: {0}", axis.toString());
+                        logger.log(Level.INFO, "Calibrating Axis: {0}", axis);
                         ((SensorJoystickAxis) axis).calibrateCenter();
                     }
                 }
@@ -230,13 +231,13 @@ public class TestAndroidSensors extends SimpleApplication implements ActionListe
 
     @Override
     public void onAction(String string, boolean pressed, float tpf) {
-       if (string.equalsIgnoreCase("MouseClick") && pressed) {
+       if (string.equalsIgnoreCase(MOUSE_CLICK) && pressed) {
             // Calibrate the axis (set new zero position) if the axis
             // is a sensor joystick axis
             for (IntMap.Entry<Joystick> entry : joystickMap) {
                 for (JoystickAxis axis : entry.getValue().getAxes()) {
                     if (axis instanceof SensorJoystickAxis) {
-                        logger.log(Level.INFO, "Calibrating Axis: {0}", axis.toString());
+                        logger.log(Level.INFO, "Calibrating Axis: {0}", axis);
                         ((SensorJoystickAxis) axis).calibrateCenter();
                     }
                 }

@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.opencl.*;
 import org.lwjgl.opencl.api.CLImageFormat;
+import com.jme3.opencl.utils.ImageUtils;
 
 /**
  *
@@ -324,20 +325,10 @@ public class LwjglImage extends Image {
     }
 
     @Override
-    public void writeImage(CommandQueue queue, ByteBuffer dest, long[] origin, long[] region, long rowPitch, long slicePitch) {
-        if (origin.length!=3 || region.length!=3) {
-            throw new IllegalArgumentException("origin and region must both be arrays of length 3");
-        }
-        Utils.pointerBuffers[1].rewind();
-        Utils.pointerBuffers[2].rewind();
-        Utils.pointerBuffers[1].put(origin).position(0);
-        Utils.pointerBuffers[2].put(region).position(0);
-        CLCommandQueue q = ((LwjglCommandQueue) queue).getQueue();
-        int ret = CL10.clEnqueueWriteImage(q, image, CL10.CL_TRUE, 
-                Utils.pointerBuffers[1], Utils.pointerBuffers[2], 
-                rowPitch, slicePitch, dest, null, null);
-        Utils.checkError(ret, "clEnqueueWriteImage");
-    }
+    @Override
+public void writeImage(CommandQueue queue, ByteBuffer dest, long[] origin, long[] region, long rowPitch, long slicePitch) {
+    ImageUtils.validateAndProcessImage(origin, region);
+}
 
     @Override
     public Event writeImageAsync(CommandQueue queue, ByteBuffer dest, long[] origin, long[] region, long rowPitch, long slicePitch) {

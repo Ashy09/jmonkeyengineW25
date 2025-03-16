@@ -210,21 +210,8 @@ public class TestObbVsBounds extends SimpleApplication {
     public void makeAreaGeom() {
 
         Vector3f[] points = new Vector3f[8];
-
-        for (int i = 0; i < points.length; i++) {
-            points[i] = new Vector3f();
-        }
-
-        points[0].set(-1, -1, 1);
-        points[1].set(-1, 1, 1);
-        points[2].set(1, 1, 1);
-        points[3].set(1, -1, 1);
-
-        points[4].set(-1, -1, -1);
-        points[5].set(-1, 1, -1);
-        points[6].set(1, 1, -1);
-        points[7].set(1, -1, -1);
-
+        initializePoints(points);
+        
         Mesh box = WireFrustum.makeFrustum(points);
         areaGeom = new Geometry("light", box);
         areaGeom.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
@@ -242,11 +229,10 @@ public class TestObbVsBounds extends SimpleApplication {
         frustumGeom.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
         rootNode.attachChild(frustumGeom);
     }
-
-    public void makeBoxWire(BoundingBox box) {
-        Vector3f[] points = new Vector3f[8];
-        for (int i = 0; i < 8; i++) {
+        private void initializePoints(Vector3f[] points) {
+        for(int i=0; i<8; i++) {
             points[i] = new Vector3f();
+
         }
         points[0].set(-1, -1, 1);
         points[1].set(-1, 1, 1);
@@ -258,6 +244,12 @@ public class TestObbVsBounds extends SimpleApplication {
         points[6].set(1, 1, -1);
         points[7].set(1, -1, -1);
 
+    }
+
+    public void makeBoxWire(BoundingBox box) {
+        Vector3f[] points = new Vector3f[8];
+        initializePoints(points);
+        
         WireFrustum frustumShape = new WireFrustum(points);
         aabbGeom = new Geometry("box", frustumShape);
         aabbGeom.setMaterial(new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"));
